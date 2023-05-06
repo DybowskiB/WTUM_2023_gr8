@@ -29,9 +29,9 @@ def train(data):
     test_data = data.iloc[n_train:]
 
     # Declare features
-    exog_train_data = train_data[['onpromotion', 'holiday_event_type', 'locale', 'locale_name',
+    exog_train_data = train_data[['holiday_event_type', 'locale', 'locale_name',
                                   'description', 'transferred', 'dcoilwtico', 'transactions', 'paid_day']]
-    exog_test_data = test_data[['onpromotion', 'holiday_event_type', 'locale', 'locale_name',
+    exog_test_data = test_data[['holiday_event_type', 'locale', 'locale_name',
                                 'description', 'transferred', 'dcoilwtico', 'transactions', 'paid_day']]
 
     # Get the optimal order of the ARIMA model
@@ -40,11 +40,11 @@ def train(data):
     d_max = 4
     q_max = 6
     p_range = range(1, p_max)
-    d_range = range(0, d_max)
+    d_range = range(1, d_max)
     q_range = range(1, q_max)
     best_predictions = []
     min_mse = sys.maxsize
-    iteration = 0
+    iteration = 1
     max_iteration = (p_max - 1) * d_max * (q_max - 1)
     for p in p_range:
         for d in d_range:

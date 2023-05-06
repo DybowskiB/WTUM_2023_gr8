@@ -8,8 +8,9 @@ warnings.filterwarnings("ignore")
 # Product family in [0; 32]
 print("ARIMA model store sales prediction")
 store_nbr = family = -1
-while (store_nbr < 1) | (store_nbr > 54) | (family < 0) | (family > 32):
+while (store_nbr < 1) | (store_nbr > 54):
     store_nbr = int(input("Enter store number ([1; 54]): "))
+while (family < 0) | (family > 32):
     family = int(input("Enter family product number ([0; 32]): "))
 data = prepare_data(store_nbr, family)
 result = train(data)
