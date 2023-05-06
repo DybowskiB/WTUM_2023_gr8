@@ -41,10 +41,8 @@ def merge_data(data):
     data = pd.merge(data, transactions_data, on=['date', 'store_nbr'], how='left')
     # Perform time-weighted interpolation to gain oil data
     data = time_weighted_interpolation(data, 'dcoilwtico')
-    # Interpolate missing transactions values based on date and store_nbr
-    data['transactions'] = data['transactions'].interpolate(method='linear',
-                                                            limit_direction='both',
-                                                            column=['date', 'store_nbr'])
+    # Interpolate missing transactions values
+    data = time_weighted_interpolation(data, 'transactions')
 
     # Fill missing values connected with holidays events with a default value
     data['holiday_event_type'].fillna("None", inplace=True)
@@ -112,8 +110,6 @@ def preprocess(data, filename):
     add_data_about_paid_days(data)
     # Convert string values to number (int)
     data = convert_all_values(data)
-    # Drop first date
-    data = data[data['date'] != '2013-01-01']
     # Check train_data correctness
     try:
         check_missing_values(data)
