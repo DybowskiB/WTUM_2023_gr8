@@ -1,0 +1,6 @@
+pandas
+matplotlib
+torchvision
+pytorch-lightning
+scikit-learn
+xgboost
