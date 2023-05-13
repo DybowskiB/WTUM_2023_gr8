@@ -36,9 +36,9 @@ def train(data):
 
     # Get the optimal order of the ARIMA model
     p_optimal = d_optimal = q_optimal = 0
-    p_max = 11
-    d_max = 4
-    q_max = 6
+    p_max = 2
+    d_max = 2
+    q_max = 2
     p_range = range(1, p_max)
     d_range = range(1, d_max)
     q_range = range(1, q_max)
@@ -70,6 +70,7 @@ def train(data):
                     d_optimal = d
                     q_optimal = q
                     best_predictions = predictions
+                    min_mse = mse
 
     return test_data, best_predictions, p_optimal, d_optimal, q_optimal
 
