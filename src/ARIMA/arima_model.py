@@ -37,7 +37,7 @@ def train(data):
 
     # Get the optimal order of the ARIMA model
     p_optimal = d_optimal = q_optimal = 0
-    p_max = 6
+    p_max = 11
     d_max = 4
     q_max = 6
     p_range = range(1, p_max)
@@ -79,7 +79,7 @@ def train(data):
     return test_data, best_predictions, p_optimal, d_optimal, q_optimal
 
 
-def calculate_mse_plot(test_data, predictions, draw):
+def calculate_mse_plot(test_data, predictions, draw, store_nbr, family):
 
     # Calculate mean squared error of predictions
     mse = mean_squared_error(test_data['sales'], predictions)
@@ -91,6 +91,7 @@ def calculate_mse_plot(test_data, predictions, draw):
         plt.plot(test_data.index, test_data['sales'], label='test data')
         plt.plot(predictions.index, predictions, label='predicted values')
         plt.legend()
+        plt.title('Store:' + str(store_nbr) + ' Product type:' + str(family))
         plt.show()
 
     return mse
