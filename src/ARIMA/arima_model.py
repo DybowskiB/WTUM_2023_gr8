@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from statsmodels.tsa.arima.model import ARIMA
 from sklearn.metrics import mean_squared_error
+import numpy as np
 import sys
 
 
@@ -29,18 +30,18 @@ def train(data):
     test_data = data.iloc[n_train:]
 
     # Declare features
-    exog_train_data = train_data[['holiday_event_type', 'locale', 'locale_name',
-                                  'description', 'transferred', 'dcoilwtico', 'transactions', 'paid_day']]
-    exog_test_data = test_data[['holiday_event_type', 'locale', 'locale_name',
-                                'description', 'transferred', 'dcoilwtico', 'transactions', 'paid_day']]
+    exog_train_data = train_data[['holiday_event_type', 'locale', 'locale_name', 'description', 'transferred',
+                                  'dcoilwtico', 'transactions', 'paid_day']]
+    exog_test_data = test_data[['holiday_event_type', 'locale', 'locale_name', 'description', 'transferred',
+                                'dcoilwtico', 'transactions', 'paid_day']]
 
     # Get the optimal order of the ARIMA model
     p_optimal = d_optimal = q_optimal = 0
-    p_max = 2
-    d_max = 2
-    q_max = 2
+    p_max = 6
+    d_max = 4
+    q_max = 6
     p_range = range(1, p_max)
-    d_range = range(1, d_max)
+    d_range = range(0, d_max)
     q_range = range(1, q_max)
     best_predictions = []
     min_mse = sys.maxsize
@@ -54,9 +55,12 @@ def train(data):
                 print('Iteration: ', iteration, " / ", max_iteration)
                 iteration = iteration + 1
 
-                # Fit the ARIMA model to the training data
-                model = ARIMA(endog=train_data['sales'], exog=exog_train_data, order=(p, d, q))
-                results = model.fit(method_kwargs={'maxiter': 1000})
+                try:
+                    # Fit the ARIMA model to the training data
+                    model = ARIMA(endog=train_data['sales'], exog=exog_train_data, order=(p, d, q))
+                    results = model.fit(method_kwargs={'maxiter': 1000})
+                except np.linalg.LinAlgError:
+                    continue
 
                 # Make forecasts for future time periods
                 predictions = results.predict(start=len(train_data), end=len(data) - 1,
