@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from statsmodels.tsa.arima.model import ARIMA
 from sklearn.metrics import mean_squared_error
+import numpy as np
 import sys
 
 
@@ -29,10 +30,10 @@ def train(data):
     test_data = data.iloc[n_train:]
 
     # Declare features
-    exog_train_data = train_data[['holiday_event_type', 'locale', 'locale_name',
-                                  'description', 'transferred', 'dcoilwtico', 'transactions', 'paid_day']]
-    exog_test_data = test_data[['holiday_event_type', 'locale', 'locale_name',
-                                'description', 'transferred', 'dcoilwtico', 'transactions', 'paid_day']]
+    exog_train_data = train_data[['holiday_event_type', 'locale', 'locale_name', 'description', 'transferred',
+                                  'dcoilwtico', 'transactions', 'paid_day']]
+    exog_test_data = test_data[['holiday_event_type', 'locale', 'locale_name', 'description', 'transferred',
+                                'dcoilwtico', 'transactions', 'paid_day']]
 
     # Get the optimal order of the ARIMA model
     p_optimal = d_optimal = q_optimal = 0
@@ -40,7 +41,7 @@ def train(data):
     d_max = 4
     q_max = 6
     p_range = range(1, p_max)
-    d_range = range(1, d_max)
+    d_range = range(0, d_max)
     q_range = range(1, q_max)
     best_predictions = []
     min_mse = sys.maxsize
@@ -54,9 +55,12 @@ def train(data):
                 print('Iteration: ', iteration, " / ", max_iteration)
                 iteration = iteration + 1
 
-                # Fit the ARIMA model to the training data
-                model = ARIMA(endog=train_data['sales'], exog=exog_train_data, order=(p, d, q))
-                results = model.fit(method_kwargs={'maxiter': 1000})
+                try:
+                    # Fit the ARIMA model to the training data
+                    model = ARIMA(endog=train_data['sales'], exog=exog_train_data, order=(p, d, q))
+                    results = model.fit(method_kwargs={'maxiter': 1000})
+                except np.linalg.LinAlgError:
+                    continue
 
                 # Make forecasts for future time periods
                 predictions = results.predict(start=len(train_data), end=len(data) - 1,
@@ -70,11 +74,12 @@ def train(data):
                     d_optimal = d
                     q_optimal = q
                     best_predictions = predictions
+                    min_mse = mse
 
     return test_data, best_predictions, p_optimal, d_optimal, q_optimal
 
 
-def calculate_mse_plot(test_data, predictions, draw):
+def calculate_mse_plot(test_data, predictions, draw, store_nbr, family):
 
     # Calculate mean squared error of predictions
     mse = mean_squared_error(test_data['sales'], predictions)
@@ -86,6 +91,7 @@ def calculate_mse_plot(test_data, predictions, draw):
         plt.plot(test_data.index, test_data['sales'], label='test data')
         plt.plot(predictions.index, predictions, label='predicted values')
         plt.legend()
+        plt.title('Store:' + str(store_nbr) + ' Product type:' + str(family))
         plt.show()
 
     return mse

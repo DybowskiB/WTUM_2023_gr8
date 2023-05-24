@@ -15,4 +15,4 @@ while (family < 0) | (family > 32):
 data = prepare_data(store_nbr, family)
 result = train(data)
 print("Chosen p, d and q values:", result[2], result[3], result[4])
-calculate_mse_plot(result[0], result[1], True)
+calculate_mse_plot(result[0], result[1], True, store_nbr, family)
