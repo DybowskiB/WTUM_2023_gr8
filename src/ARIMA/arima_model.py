@@ -19,7 +19,7 @@ def prepare_data(store_nbr, family):
     return data
 
 
-def train(data):
+def train(data, iterations):
 
     # Print info about training start
     print("Start training process ...")
@@ -35,11 +35,16 @@ def train(data):
     exog_test_data = test_data[['holiday_event_type', 'locale', 'locale_name', 'description', 'transferred',
                                 'dcoilwtico', 'transactions', 'paid_day']]
 
+    # p, d, q possible max values (depends on iterations level)
+    p_pos_val = [2, 6, 11, 11, 21]
+    d_pos_val = [1, 1, 2, 4, 5]
+    q_pos_val = [2, 3, 6, 6, 11]
+
     # Get the optimal order of the ARIMA model
     p_optimal = d_optimal = q_optimal = 0
-    p_max = 11
-    d_max = 4
-    q_max = 6
+    p_max = p_pos_val[iterations - 1]
+    d_max = d_pos_val[iterations - 1]
+    q_max = q_pos_val[iterations - 1]
     p_range = range(1, p_max)
     d_range = range(0, d_max)
     q_range = range(1, q_max)
